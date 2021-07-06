@@ -1,0 +1,32 @@
+:root {
+    --text-background: rgb(252, 252, 250); 
+    --accent-background: rgb(242, 242, 240);
+    --main-background: rgb(240, 239, 231);
+    --accent-color: lightskyblue; 
+}
+
+body {
+    padding: 10px;
+    background-color: var(--main-background); 
+}
+
+#projects {
+    padding: 10px;
+    background-color: var(--accent-background);
+}
+
+.project {
+    padding: 10px;
+    margin: 10px;
+    background-color: var(--text-background);
+
+    display: flex;
+    flex-direction: column;
+
+    border-radius: 7px;
+}
+
+.UI-control {
+    padding: 10px;
+    background-color: var(--accent-background);
+}

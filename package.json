@@ -1,0 +1,22 @@
+{
+  "name": "todo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "watch": "webpack --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.41.1",
+    "webpack-cli": "^4.7.2"
+  },
+  "dependencies": {
+    "css-loader": "^5.2.6",
+    "style-loader": "^3.0.0"
+  }
+}
