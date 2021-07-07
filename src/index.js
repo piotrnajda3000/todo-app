@@ -2,11 +2,6 @@ import './style.css'
 import { Todo } from './modules/todo.js'
 import { Project, projects } from './modules/project.js'
 
-const defaultProject = Project.BaseProject('Inbox')  
-
-const editableProject = Project.EditableProject('Test')
-
-
 // Init default todo to the default project 
 let defaultTodo = Todo('Default todo.', '22-05-2022')
 

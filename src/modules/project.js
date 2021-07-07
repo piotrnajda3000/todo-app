@@ -25,17 +25,35 @@ const projects = {
 
 const Project = (() => {
 
-    const projectBasics = {
-        addTodo(todo) {
-            this.todos[todo.title] = todo;
-            todo.project = this.name
-        },
-        removeTodo(todo) {
-            delete this.todos[todo.title]
-        },
+    /*
+    const flying = o => {
+        let isFlying = false;
+        return Object.assign({}, o, {
+            fly () {
+                isFlying = true;
+                return this;
+            },
+            isFlying: () => isFlying,
+            land () {
+                isFlying = false;
+                return this;
+            }
+        );
+    };
+    */ 
+    const defaultMethods = methodsObj => {
+        return Object.assign({}, methodsObj, {
+            addTodo (todo) {
+                this.todos[todo.title] = todo;
+                todo.project = this.name
+            },
+            removeTodo (todo) {
+                delete this.todos[todo.title]
+            }
+        })
     }
 
-    const projectRename = {
+    const editMethods =  {
         setName(newName) {
             delete projects.storage[this.name]
             this.name = newName;
@@ -48,33 +66,25 @@ const Project = (() => {
         }
     }
 
-    function BaseProject(specification) {
+    /*
+    const quacking = quack => o => Object.assign({}, o, {
+        quack: () => quack
+    });
+    */
+    const Project = name => methodsObj => Object.assign({}, methodsObj, {
+        name,
+        todos: {},
+    })
 
-        let projectInfo = {
-            name: specification.name,
-            todos: {}
-        }
+    // const createDuck = quack => quacking(quack)(flying({}));
+    const createDefaultProject = name => Project(name)(defaultMethods({})); 
 
-        let projectObj = {...projectBasics, projectInfo}; 
+    // const duck = createDuck('Quack!');
+    const defaultProject = createDefaultProject('Inbox')
 
-        return projects.addProject(projectObj);
-    }
+    const createNonDefaultProject =  name => Project(name)(defaultMethods(editMethods)); 
+    const sampleProject = createNonDefaultProject('Sample Project');
 
-    function EditableProject(specification) {
-        
-        let that = BaseProject(specification); 
-
-        let projectObj = {...that, ...projectRename}
-
-        return projects.addProject(projectObj); 
-
-    }
-
-    return {
-        BaseProject,
-        EditableProject
-    }
-
-})(); 
+})();
 
 export { Project, projects }
