@@ -51,7 +51,7 @@ export default (function UI() {
   const display = {
     // Display list of all projects or lists
     listOf: (type) => {
-      const storage = storageModule.retrieve();
+      const storage = storageModule.getStorage();
 
       reset.dynamicContent();
 
@@ -109,8 +109,8 @@ export default (function UI() {
     },
     // Display todos either type a project or a list
     todosOf: (name, type) => {
-      const storage = storageModule.retrieve();
-      console.log(`retrieved storage:`, storage);
+      const storage = storageModule.getStorage();
+      console.log(`getStorage:`, storage);
 
       reset.dynamicContent();
 
@@ -234,7 +234,7 @@ export default (function UI() {
       });
     },
     singleTodoUI: (todo, todoDiv, todoControl, project, type) => {
-      const storage = storageModule.retrieve();
+      const storage = storageModule.getStorage();
 
       const expandMore = todoControl.querySelector(
         'span[data-control="expand_more"]'

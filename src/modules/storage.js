@@ -30,15 +30,19 @@ const proto = {
 };
 
 const storageModule = (() => {
+  let storage;
+
   const populate = () => {
     // console.log("[Start storage.init]");
 
-    const storage = Object.assign(proto, {
+    storage = Object.assign(proto, {
       lists: [],
       projects: [],
     });
 
-    bindEvents(storage);
+    events.subscribe("Created an object", ({ object, type }) => {
+      storage[type].push(object);
+    });
 
     // Populate storage
     const defaultProject = Project({
@@ -85,68 +89,13 @@ const storageModule = (() => {
     //   localStorage.getItem("storageLS")
     // );
   };
-  const bindEvents = (storage) => {
-    events.subscribe("Created an object", ({ object, type }) => {
-      if (!storage[type].some((item) => item.name === object.name)) {
-        storage[type].push(object);
-        events.publish("Update local storage");
-      }
-    });
-    events.subscribe("Update local storage", () => {
-      localStorage.setItem("storageLS", JSON.stringify(storage));
-    });
-  };
-  const retrieve = () => {
-    // console.log(events.events);
-    let storage = JSON.parse(localStorage.getItem("storageLS"));
-    bindEvents(storage);
-    storage = rebuildMethods(storage);
-    // console.log(`retrieved storage:`, storage);
-    return storage;
-  };
-  const rebuildMethods = (storage) => {
-    // console.log(`rebuilding:`, storage);
-    Object.assign(storage, proto);
-
-    // Rebuild object methods after JSON
-    for (let [idx, project] of Object.entries(storage.projects)) {
-      if (project.default) {
-        storage.projects[idx] = Project({
-          name: project.name,
-          todos: project.todos,
-        })({ default: true });
-      } else {
-        storage.projects[idx] = UserProject({
-          name: project.name,
-          todos: project.todos,
-        });
-      }
-      for (let [idx, todo] of Object.entries(project.todos)) {
-        project.todos[idx] = Todo({
-          title: todo.title,
-          dueDate: todo.dueDate,
-          complete: todo.complete || false,
-        });
-      }
-    }
-
-    storage.lists[0] = List({
-      name: "Inbox",
-      projects: storage.projects[0],
-      default: true,
-    });
-
-    storage.lists[1] = List({
-      name: "All Tasks",
-      projects: storage.projects,
-    });
-
+  const getStorage = () => {
     return storage;
   };
 
   return {
+    getStorage,
     populate,
-    retrieve,
   };
 })();
 
