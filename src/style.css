@@ -1,32 +1,250 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
-    --text-background: rgb(252, 252, 250); 
-    --accent-background: rgb(242, 242, 240);
-    --main-background: rgb(240, 239, 231);
-    --accent-color: lightskyblue; 
+  --light-background: rgb(252, 252, 252);
+  --dim-background: rgb(242, 242, 242);
+  --dimmest-background: rgb(235, 235, 235);
+  --accent-color: lightskyblue;
+  font-family: Roboto, sans-serif;
+}
+
+html {
+  height: 100%;
 }
 
 body {
-    padding: 10px;
-    background-color: var(--main-background); 
+  background-color: var(--dimmest-background);
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  max-width: 960px;
 }
 
-#projects {
-    padding: 10px;
-    background-color: var(--accent-background);
+/* Hover properties */
+
+.material-icons,
+button,
+.list {
+  color: rgba(0, 0, 0, 0.5);
 }
 
-.project {
-    padding: 10px;
-    margin: 10px;
-    background-color: var(--text-background);
-
-    display: flex;
-    flex-direction: column;
-
-    border-radius: 7px;
+.material-icons:hover,
+button:hover,
+.list:hover {
+  color: black;
+  cursor: pointer;
 }
 
-.UI-control {
-    padding: 10px;
-    background-color: var(--accent-background);
+button:hover,
+.list span:hover {
+  background-color: var(--dimmest-background) !important;
 }
+
+.list {
+  flex-basis: 100% !important;
+}
+
+/* Pop-up message */
+
+.message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.failure {
+  background-color: #ff000080;
+}
+
+.success {
+  background-color: #00ff3780;
+}
+
+/* Message end */
+
+/* Top bar */
+#topDisplay {
+  background-color: var(--dim-background);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  height: 57px;
+}
+
+#name {
+  font-size: 1.1rem;
+}
+
+/* End Top project bar */
+
+#contentWrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: scroll;
+}
+
+#contentWrapper::-webkit-scrollbar {
+  display: none;
+}
+
+#contentWrapper {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Single todo */
+
+.todo {
+  background-color: var(--light-background);
+  padding: 1rem;
+  margin-top: 1rem;
+  margin-inline: 1rem;
+  border-radius: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.todo:last-of-type {
+  margin-bottom: 1rem;
+}
+
+.title,
+.editInput {
+  max-width: 100%;
+  word-break: break-all;
+}
+
+.title {
+  height: 1.15rem;
+  overflow: hidden;
+}
+
+.not-expanded::after {
+  content: "...";
+}
+
+.expanded {
+  height: auto;
+  overflow-y: visible;
+}
+
+.todo .title,
+.dueDate {
+  margin-bottom: 1rem;
+}
+
+.dueDate {
+  align-self: center;
+}
+
+.todoControl {
+  display: flex;
+  justify-content: space-around;
+}
+
+.editInput {
+  margin-bottom: 0.5rem;
+}
+
+.editControlButtons {
+  display: flex;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  margin-bottom: 0.5rem;
+}
+
+/* End Single Todo */
+
+#newWrapper::before {
+  content: "";
+  height: 2rem;
+}
+
+#newWrapper {
+  display: flex;
+  justify-content: center;
+  height: 2rem;
+  background: transparent;
+}
+
+#new {
+  width: 100%;
+  margin-inline: 1rem;
+  border-radius: 0 0 2rem 2rem;
+  background-color: var(--light-background);
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Bottom navigation */
+
+#bottomNav {
+  border-top: 1px solid rgba(0, 0, 0, 0.25);
+  background-color: var(--dim-background);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  font-size: 1.1rem;
+}
+
+button {
+  background: none;
+  border-color: rgba(0, 0, 0, 0.75);
+  border: 0;
+  height: 100%;
+  padding: 1rem;
+}
+
+.editControlButtons button {
+  background-color: var(--dim-background);
+  flex: 1;
+  padding: 0.5rem;
+}
+
+.editControlButtons button:first-of-type {
+  border-right: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+/* End bottom navigation */
+
+/* List display */
+.list {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 1rem;
+  padding-inline: 1rem;
+}
+
+.list:last-of-type {
+  margin-bottom: 3rem;
+}
+
+.list span {
+  background-color: var(--dim-background);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+input {
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  padding: 0.2rem;
+  height: auto;
+}
+
+/* End list display */

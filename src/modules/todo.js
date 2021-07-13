@@ -1,25 +1,32 @@
-import { projects } from "./project";
+import events from "./libraries/pubsub";
 
-function Todo(title, dueDate) {
+const proto = {
+  switchComplete() {
+    this.complete = !this.complete;
 
-    let complete = false; 
-
-    const proto = {
-        setProp(prop, value){
-            delete projects.storage[this.project].todos[this.title]
-            this[prop] = value;
-            if (prop == 'title') {
-                projects.storage[this.project].todos[value] = this;
-            } 
-            else {
-                projects.storage[this.project].todos[this.title] = this; 
-            }
-        }
+    if (this.complete) {
+      console.log("Completed!");
+    } else if (!this.complete) {
+      console.log("Not done (yet)!");
     }
 
-    let todoObj = Object.assign(Object.create(proto), { title, dueDate, complete });
+    return this.complete;
+  },
+};
 
-    return todoObj; 
-}
+const Todo = (data) => {
+  let todoObj = Object.assign(Object.create(proto), {
+    title: data.title,
+    dueDate: data.dueDate,
+  });
 
-export { Todo }
+  Object.defineProperty(todoObj, "complete", {
+    value: data.complete || false,
+    enumerable: false,
+    writable: true,
+  });
+
+  return todoObj;
+};
+
+export { Todo };

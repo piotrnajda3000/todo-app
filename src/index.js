@@ -1,16 +1,12 @@
-import './style.css'
-import { Todo } from './modules/todo.js'
-import { Project, projects } from './modules/project.js'
+import { storageModule } from "./modules/storage";
+import "./style.css";
+import UI from "./modules/UI";
 
-// Init default todo to the default project 
-let defaultTodo = Todo('Default todo.', '22-05-2022')
+// localStorage.removeItem("storageLS");
+// localStorage.clear();
 
-// If I don't specify the project a Todo goes in, add it to the project that's set as default? 
-// So that means, the project specifying part should go in the Todo declaration
-// And that makes sense, since ALL todos have to belong to a project. 
-// Scrap the .addTodo functionality and implement it directly in the TODO prototype. 
+if (!localStorage.getItem("storageLS")) {
+  storageModule.populate();
+}
 
-// Log the projects object 
-// console.log(projects)
-
-
+UI.display.todosOf("Inbox", "list");

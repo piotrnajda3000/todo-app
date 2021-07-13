@@ -1,90 +1,41 @@
-const projects = {
-    storage: {},
-    addProject: (project) => {
-        projects.storage[project.name] = project
-        return projects.storage[project.name]
-    },
-    removeProject: (project) => {
-        delete projects.storage[project.name];
-    },
-    displayProjects: (...projectNames) => {
-        if (projectNames[0] == 'All') {
-            console.log('Logging all projects: ')
-            for (const projectName in projects.storage) {
-                console.log(projects.storage[projectName])
-            }
-        }
-        else {
-            console.log('Loggin desired projects: ')
-            for (const projectName of projectNames) {
-                console.log(projects.storage[projectName])
-            }
-        }
-    },
-}
+import events from "./libraries/pubsub";
+import storage from "./storage";
 
-const Project = (() => {
+const proto = {
+  addTodo(todo) {
+    this.todos[todo.title] = todo;
+    events.publish("Update local storage");
+  },
+  removeTodo(todo) {
+    delete this.todos[todo.title];
+    events.publish("Update local storage");
+  },
+};
 
-    /*
-    const flying = o => {
-        let isFlying = false;
-        return Object.assign({}, o, {
-            fly () {
-                isFlying = true;
-                return this;
-            },
-            isFlying: () => isFlying,
-            land () {
-                isFlying = false;
-                return this;
-            }
-        );
-    };
-    */ 
-    const defaultMethods = methodsObj => {
-        return Object.assign({}, methodsObj, {
-            addTodo (todo) {
-                this.todos[todo.title] = todo;
-                todo.project = this.name
-            },
-            removeTodo (todo) {
-                delete this.todos[todo.title]
-            }
-        })
-    }
+let editMethods = {
+  rename(newName) {
+    console.log(`storage:`, storage);
+    this.name = newName;
+    events.publish("Update local storage");
+  },
+  delete() {
+    let projectIdx = this.projectIdx(this.name);
+    this.projects.splice(projectIdx, 1);
+    events.publish("Update local storage");
+  },
+};
 
-    const editMethods =  {
-        setName(newName) {
-            delete projects.storage[this.name]
-            this.name = newName;
-            projects.storage[newName] = this;
+const Project = (data) => (extendWith) => {
+  let projectObj = Object.assign({}, proto, data, extendWith);
 
-            // Update the project name in project's todos. 
-            for (const todo in this.todos) {
-                this.todos[todo].project = newName;
-            }
-        }
-    }
+  events.publish("Created an object", {
+    object: projectObj,
+    type: "projects",
+  });
 
-    /*
-    const quacking = quack => o => Object.assign({}, o, {
-        quack: () => quack
-    });
-    */
-    const Project = name => methodsObj => Object.assign({}, methodsObj, {
-        name,
-        todos: {},
-    })
+  return projectObj;
+};
 
-    // const createDuck = quack => quacking(quack)(flying({}));
-    const createDefaultProject = name => Project(name)(defaultMethods({})); 
+const UserProject = (data) => Project(data)(editMethods);
 
-    // const duck = createDuck('Quack!');
-    const defaultProject = createDefaultProject('Inbox')
-
-    const createNonDefaultProject =  name => Project(name)(defaultMethods(editMethods)); 
-    const sampleProject = createNonDefaultProject('Sample Project');
-
-})();
-
-export { Project, projects }
+export { Project, UserProject };
