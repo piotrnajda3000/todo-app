@@ -1,12 +1,15 @@
 // import { storage } from "./list";
 import events from "./libraries/pubsub";
-import { Project, UserProject } from "./project";
-import { Todo } from "./todo";
-import { storageModule } from "./storage";
+import { DefaultProject, UserProject } from "./Project";
+import { Todo } from "./Todo";
+import { Storage } from "./Storage";
 
 export default (function UI() {
-  const init = (() => {
-    // Init
+  const init = () => {
+    if (!localStorage.getItem("storageLS")) {
+      Storage.init();
+    }
+
     document.body.innerHTML = `
     <div id="topDisplay"></div>
       
@@ -46,12 +49,12 @@ export default (function UI() {
     events.subscribe("Display todos", ({ name, type }) =>
       display.todosOf(name, type)
     );
-  })();
+  };
 
   const display = {
     // Display list of all projects or lists
     listOf: (type) => {
-      const storage = storageModule.getStorage();
+      const storage = Storage.getStorage();
 
       reset.dynamicContent();
 
@@ -77,8 +80,8 @@ export default (function UI() {
       if (type == "projects") {
         const newProject = create.plusButton();
         newProject.addEventListener("click", () => {
-          UserProject(prompt("Project name?"));
-          display.storage("projects");
+          UserProject({ name: prompt("Project name?"), todos: {} });
+          display.listOf("projects");
         });
       } else {
         const div = document.createElement("div");
@@ -109,15 +112,15 @@ export default (function UI() {
     },
     // Display todos either type a project or a list
     todosOf: (name, type) => {
-      const storage = storageModule.getStorage();
-      console.log(`getStorage:`, storage);
+      const storage = Storage.getStorage();
+      console.log("Reading from:", storage);
 
       reset.dynamicContent();
 
       contentWrapper.style.cssText = "flex: 1";
 
       if (type == "list") {
-        const list = storage.list(name);
+        const list = storage.getList(name);
 
         topDisplay.innerHTML = `
                   <span id="name">${list.name}</span>
@@ -139,11 +142,14 @@ export default (function UI() {
           create.todosFrom(project, type);
         }
       } else if (type == "project") {
-        const project = storage.project(name);
+        const project = storage.getProject(name);
 
         const newTodo = create.plusButton();
         newTodo.addEventListener("click", () => {
-          const todo = Todo(prompt("Title"), prompt("Due?"));
+          const todo = Todo({
+            title: prompt("Title"),
+            dueDate: prompt("Due?"),
+          });
           project.addTodo(todo);
           events.publish("Display todos", { name, type });
         });
@@ -185,7 +191,7 @@ export default (function UI() {
         const todo = todosObject[todoName];
 
         for (const prop in todo) {
-          if (todo.hasOwnProperty(prop)) {
+          if (todo.hasOwnProperty(prop) && prop != "complete") {
             const todoProp = document.createElement("div");
             todoProp.classList.add(prop);
             todoProp.textContent = `${todo[prop]}`;
@@ -229,12 +235,12 @@ export default (function UI() {
       });
 
       renameProject.addEventListener("click", () => {
-        project.rename(prompt("New project name?"));
-        display.todosOf(project.name, "project");
+        let newName = project.rename(prompt("New project name?"));
+        display.todosOf(newName, "project");
       });
     },
     singleTodoUI: (todo, todoDiv, todoControl, project, type) => {
-      const storage = storageModule.getStorage();
+      const storage = Storage.getStorage();
 
       const expandMore = todoControl.querySelector(
         'span[data-control="expand_more"]'
@@ -286,8 +292,7 @@ export default (function UI() {
         accept.addEventListener(
           "click",
           function () {
-            this.title = titleInput.value;
-            this.dueDate = dueDateInput.value;
+            this.edit(titleInput.value, dueDateInput.value);
             display.todosOf(project.name, "project");
           }.bind(todo)
         );
@@ -310,11 +315,9 @@ export default (function UI() {
       });
 
       deleteTodo.addEventListener("click", () => {
-        console.log(`project:`, project);
         project.removeTodo(todo);
-
         // Determine whether the current tab is a project or list tab
-        if (storage.project(project.name)) {
+        if (storage.getProject(project.name)) {
           type = "project";
         } else {
           type = "list";
@@ -325,7 +328,6 @@ export default (function UI() {
       toggleComplete.addEventListener(
         "click",
         function () {
-          console.log(todo);
           let complete = todo.switchComplete();
           if (complete == true) {
             this.style.backgroundColor = "#00ff3780";
@@ -347,6 +349,7 @@ export default (function UI() {
   };
 
   return {
+    init,
     display,
   };
 })();

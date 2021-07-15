@@ -1,5 +1,5 @@
 import events from "./libraries/pubsub";
-import storage from "./storage";
+import storage from "./Storage";
 
 const List = (data) => {
   if (!Array.isArray(data.projects)) {
