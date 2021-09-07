@@ -1,1 +1,1 @@
-# [Live link](https://piotrnajda3000.github.io/todo/)
+# [Live link](https://piotrnajda3000.github.io/todo-app/)
